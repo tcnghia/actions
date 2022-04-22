@@ -12,10 +12,15 @@ and authenticates with it using identity tokens.
     # binary from, it is required and has no default (for now).
     # Required.
     environment: cookie-monster
+    
+    # idtoken is the identity token use to authenticate with Chainguard.
+    # If unspecified, one will be issued through GitHub OIDC using the
+    # provided audience.
+    idtoken: QWxsIHlvdXIgYmFzZSBhcmUgYmVsb25nIHRvIHVz
+    
     # audience is the identity token audience to use when creating an identity
-    # token to authenticate with Chainguard, it is rquired and has no default
-    # (for now).
-    # Required.
+    # token to authenticate with Chainguard. If an identity token isn't provided,
+    # audience is required and has no default (for now).
     audience: oscar-the-grouch
     # invite-code is an invitation code that may be used to have this workload
     # register itself with the Chainguard API the first time it executes.

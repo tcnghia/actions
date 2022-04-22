@@ -13,12 +13,19 @@ inputs:
       binary from, it is required and has no default (for now).
     required: true
 
+  idtoken:
+    description: |
+      Specifies the identity token use to authenticate with Chainguard.
+      If unspecified, one will be issued through GitHub OIDC using the
+      provided audience.
+
   audience:
     description: |
       Specifies the identity token audience to use when creating an
-      identity token to authenticate with Chainguard, it is rquired
-      and has no default (for now).
-    required: true
+      identity token to authenticate with Chainguard. If an identity
+      token isn't provided, audience is rquired and has no default
+      (for now).
+
 
   invite-code:
     description: |
@@ -42,10 +49,15 @@ runs:
       shell: bash
       env:
         CHAINGUARD_INVITE_CODE: ${{ inputs.invite-code }}
+        IDTOKEN: ${{ inputs.idtoken }}
       run: |
-        AUDIENCE="${{ inputs.audience }}"
-        IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=${AUDIENCE}" | jq -r '.value')
-
+        if [[ -z "$IDTOKEN" ]]; then
+          AUDIENCE="${{ inputs.audience }}"
+          [[ -z "$AUDIENCE" ]] && { echo "Neither idtoken or audience is set"; exit 1; }
+          IDTOKEN=$(curl -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
+             "$ACTIONS_ID_TOKEN_REQUEST_URL&audience=${AUDIENCE}" \
+             | jq -r '.value')
+        fi
         if chainctl auth login --identity-token "${IDTOKEN}"; then
           echo Logged in!
         elif [[ -z "${CHAINGUARD_INVITE_CODE}" ]]; then
