@@ -126,13 +126,17 @@ runs:
           components:
             ingressGateways:
               - name: istio-ingressgateway
-                k8s: &defaultK8s
+                k8s:
                   hpaSpec:
-                    maxReplicas: 2
-                    minReplicas: 2
+                    maxReplicas: 1
+                    minReplicas: 1
                   resources: *defaultResources
             pilot:
-              k8s: *defaultK8s
+              k8s:
+                hpaSpec:
+                  maxReplicas: 3
+                  minReplicas: 3
+                resources: *defaultResources
         EOF
             ./istio-${ISTIO_VERSION}/bin/istioctl install --skip-confirmation -f istio-profile.yaml
             ;;
