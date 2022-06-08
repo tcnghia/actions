@@ -128,8 +128,8 @@ runs:
               - name: istio-ingressgateway
                 k8s: &defaultK8s
                   hpaSpec:
-                    maxReplicas: 1
-                    minReplicas: 1
+                    maxReplicas: 2
+                    minReplicas: 2
                   resources: *defaultResources
             pilot:
               k8s: *defaultK8s
