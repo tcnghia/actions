@@ -86,10 +86,6 @@ runs:
         options:
           k3s:
             extraArgs:
-              # Let consumers use their own ingress and leave the builtin LB unclaimed
-              - arg: --disable=traefik
-                nodeFilters:
-                  - server:*
               # Let consumers use their own metrics-server and leave the builtin unclaimed
               - arg: --disable=metrics-server
                 nodeFilters:
@@ -126,6 +122,11 @@ runs:
         kubectl create clusterrolebinding oidc-reviewer \
           --clusterrole=system:service-account-issuer-discovery \
           --group=system:unauthenticated
+
+    - name: Set traefik as non-default
+      shell: bash
+      run: |
+        kubectl annotate ingressclass/traefik ingressclass.kubernetes.io/is-default-class-
 
     - name: Set start time output
       id: start-time
